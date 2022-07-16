@@ -1,0 +1,23 @@
+{
+  "name": "@ianlucas/http",
+  "version": "1.0.0",
+  "description": "A declarative HTTP server.",
+  "main": "http.ts",
+  "author": "Ian Lucas",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "passport": "^0.6.0",
+    "passport-steam": "^1.0.17",
+    "session-file-store": "^1.5.0"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.2",
+    "@types/express": "^4.17.13",
+    "@types/express-session": "^1.17.5",
+    "@types/passport": "^1.0.9",
+    "@types/session-file-store": "^1.2.2"
+  }
+}
