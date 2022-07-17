@@ -55,6 +55,6 @@ server({
         })
     ],
     on_listen() {
-        console.log("Server is up and running.")
+        console.log("Server is up and running.");
     }
 });

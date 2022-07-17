@@ -3,25 +3,24 @@ import passport from "passport";
 import auth from "./auth";
 import { Request, request_handler, Response } from "./http";
 
-interface ISteamAuthSpec {
+interface SteamAuthSpec {
     api_key: string;
     on_fail: (request: Request, response: Response) => void;
     on_success: (request: Request, response: Response) => void;
     realm: string;
     session_path: string;
     session_secret: string;
-    update_incoming_user?: (user: IUser) => Promise<void>;
-    validate_incoming_user?: (user: IUser) => Promise<void>;
+    update_incoming_user?: (user: User) => Promise<void>;
 }
 
-interface IUser {
+interface User {
     id: string;
     id2: string;
     name: string;
     photo: string;
 }
 
-interface ISteamProfile {
+interface SteamProfile {
     _json: {
         avatarfull: string;
         personaname: string;
@@ -33,8 +32,8 @@ const ACCOUNT_ID_MASK = 0xffffffff;
 
 const Strategy: any = require("passport-steam");
 
-function steam_auth(spec: ISteamAuthSpec) {
-    function is_not_one(value: number, fallback: number) {
+function steam_auth(spec: SteamAuthSpec) {
+    function replace_one(value: number, fallback: number) {
         return (
             value === 1
             ? fallback
@@ -42,14 +41,14 @@ function steam_auth(spec: ISteamAuthSpec) {
         );
     }
 
-    function get_user_data(profile: ISteamProfile): IUser {
+    function get_user_data(profile: SteamProfile): User {
 
 // For more information on the calculation done below,
 // refer to https://developer.valvesoftware.com/wiki/SteamID.
 
         const data = profile._json;
         const steam_id = BigInt(data.steamid);
-        const universe_id = is_not_one(Number(steam_id >> 56n), 0);
+        const universe_id = replace_one(Number(steam_id >> 56n), 0);
         const account_id = Number(steam_id & BigInt(ACCOUNT_ID_MASK));
         const id2 = (
             "STEAM_"
@@ -61,19 +60,13 @@ function steam_auth(spec: ISteamAuthSpec) {
         );
         return {
             id: data.steamid,
-            id2: id2,
+            id2,
             name: data.personaname,
             photo: data.avatarfull
         };
     }
 
-    async function validate_incoming_user(user: IUser) {
-        if (spec.validate_incoming_user) {
-            await spec.validate_incoming_user(user);
-        }
-    }
-
-    async function update_incoming_user(user: IUser) {
+    async function update_incoming_user(user: User) {
         if (spec.update_incoming_user) {
             await spec.update_incoming_user(user);
         }
@@ -95,12 +88,11 @@ function steam_auth(spec: ISteamAuthSpec) {
 
     async function validate(
         identifier: string,
-        profile: ISteamProfile,
+        profile: SteamProfile,
         done: (error: any, user_id?: string) => void
     ) {
         try {
             const user_data = get_user_data(profile);
-            await validate_incoming_user(user_data);
             await update_incoming_user(user_data);
             return done(null, user_data.id);
         } catch (error) {

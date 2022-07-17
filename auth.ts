@@ -4,12 +4,12 @@ import filestore from "session-file-store";
 
 const FileStore = filestore(session);
 
-interface IAuthSpec {
+interface AuthSpec {
     session_secret: string;
     session_path?: string;
 }
 
-function auth(app: Application, spec: IAuthSpec) {
+function auth(app: Application, spec: AuthSpec) {
     const filestore_options = {
         path: spec.session_path || "./sessions"
     };

@@ -1,7 +1,7 @@
 import body_parser from "body-parser";
 import express, { Application, Request as ExpressRequest, Response as ExpressResponse } from "express";
 
-interface IJSONResponseSpec {
+interface JsonResponseSpec {
     status: number;
     data: any;
 }
@@ -15,7 +15,7 @@ export interface Request {
 export interface Response {
     login: () => void;
     redirect: (url: string) => void;
-    json: (spec: IJSONResponseSpec) => void;
+    json: (spec: JsonResponseSpec) => void;
 }
 
 export function request_handler(handler: (request: Request, response: Response) => void) {
@@ -36,7 +36,7 @@ export function request_handler(handler: (request: Request, response: Response) 
                 user_id: ((request.user as string) || undefined)
             },
             {
-                json(spec: IJSONResponseSpec) {
+                json(spec: JsonResponseSpec) {
                     response.status(spec.status);
                     response.json(spec.data);
                 },
@@ -51,22 +51,22 @@ export function request_handler(handler: (request: Request, response: Response) 
     };
 }
 
-interface IRoute {
+interface Route {
     method: string;
     path: string;
     handler: (request: Request, response: Response) => void;
 }
 
-interface IServerSpec {
-    routes?: IRoute[];
+interface ServerSpec {
+    routes?: Route[];
     on_listen?: () => void;
     plugins?: ((app: Application) => void)[];
     port: number;
     static_path?: string;
 }
 
-export function server(initial_spec: IServerSpec) {
-    const default_spec: IServerSpec = {
+export function server(initial_spec: ServerSpec) {
+    const default_spec: ServerSpec = {
         routes: [],
         plugins: [],
         port: 80
