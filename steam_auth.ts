@@ -5,7 +5,7 @@ import { Request, request_handler, Response } from "./http";
 
 interface SteamAuthSpec {
     api_key: string;
-    on_fail: (request: Request, response: Response) => void;
+    on_fail: (request: Request, response: Response, login_error?: any) => void;
     on_success: (request: Request, response: Response) => void;
     realm: string;
     session_path: string;

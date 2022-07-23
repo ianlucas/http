@@ -8,6 +8,7 @@ interface JsonResponseSpec {
 
 export interface Request {
     body: any;
+    error: any;
     logout: () => void;
     user_id?: string;
 }
@@ -26,9 +27,10 @@ export function request_handler(handler: (request: Request, response: Response) 
         return handler(
             {
                 body: (request.body || undefined),
+                error,
                 logout() {
-                    request.logout(function (error) {
-                        if (error) {
+                    request.logout(function (logout_error) {
+                        if (logout_error) {
                             throw "Unable to unauthenticate.";
                         }
                     });
