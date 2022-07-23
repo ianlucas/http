@@ -13,7 +13,7 @@ interface SteamAuthSpec {
     update_incoming_user?: (user: User) => Promise<void>;
 }
 
-interface User {
+export interface User {
     id: string;
     id2: string;
     name: string;
